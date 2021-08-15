@@ -1,0 +1,68 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+Create Employment
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-briefcase"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Course/&nbsp;Class/&nbsp;Employment/&nbsp;Create</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="bg-light rounded p-5">
+
+    <form method="post" enctype="multipart/form-data" id="addressForm"
+        data-office-districts-url="{% url 'ajax_load_office_districts' %}"
+        data-office-municipalities-url="{% url 'ajax_load_office_municipalities' %}" novalidate>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-color1 btn-block">
+            Create Employment
+        </button>
+    </form>
+</div>
+<script>
+    $(function () {
+        $('#div_id_date_of_call_BS').hide();
+        $('#div_id_start_date_BS').hide();
+        $('#div_id_end_date_BS').hide();
+        $('#div_id_date_of_call_AD').hide();
+        $('#div_id_start_date_AD').hide();
+        $('#div_id_end_date_AD').hide();
+        var calendar1 = $('#id_calendar').val();
+        $('#div_id_date_of_call_' + calendar1).show();
+        $('#div_id_start_date_' + calendar1).show();
+        $('#div_id_end_date_' + calendar1).show();
+        $('#id_calendar').change(function () {
+            var calendar = $(this).val();
+            $('#div_id_date_of_call_BS').hide();
+            $('#div_id_start_date_BS').hide();
+            $('#div_id_end_date_BS').hide();
+            $('#div_id_date_of_call_AD').hide();
+            $('#div_id_start_date_AD').hide();
+            $('#div_id_end_date_AD').hide();
+            $('#div_id_date_of_call_' + calendar).show();
+            $('#div_id_start_date_' + calendar).show();
+            $('#div_id_end_date_' + calendar).show();
+            if (calendar == 'AD') {
+                $('input#id_date_of_call_BS').val('');
+                $('input#id_start_date_BS').val('');
+                $('input#id_end_date_BS').val('');
+            } else if (calendar == 'BS') {
+                $('input#id_date_of_call_AD').val('');
+                $('input#id_start_date_AD').val('');
+                $('input#id_end_date_AD').val('');
+            } else {
+                $('input#id_date_of_call_BS').val('');
+                $('input#id_start_date_BS').val('');
+                $('input#id_end_date_BS').val('');
+                $('input#id_date_of_call_AD').val('');
+                $('input#id_start_date_AD').val('');
+                $('input#id_end_date_AD').val('');
+            }
+        })
+    });
+</script>
+{% endblock %}

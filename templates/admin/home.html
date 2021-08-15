@@ -1,0 +1,940 @@
+{% extends 'dashboard.html' %}
+{% block title %}
+Admin Home
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-tachometer"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Dashboard</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row float-right">
+<div class="dropdown">
+  <button class="click-me no-decoration mr-5">Create</button>
+  <div>
+    <a href="{% url 'create-dss' %}">DSS</a>
+    <a href="{% url 'create-stakeholder' %}">Stakeholder</a>
+    <a href="{% url 'create-course' %}">Course</a>
+    <a href="{% url 'create-training' %}">Capacity Building</a>
+    <a href="{% url 'create-activity' %}">Activity</a>
+    <a href="{% url 'create-document' %}">Document</a>
+    <a href="{% url 'create-property' %}">Property</a>
+    <a href="{% url 'create-requirement' %}">Requirement</a>
+  </div>
+</div>
+</div>
+<br>
+<h2>Overview</h2>
+<div class="row pt-4 mr-3">
+    <div class="col-lg-3 col-md-6">
+        <div class="dCard mb-3 mb-lg-0">
+          <h6 class="text-muted font-weight-bold">Total DSSes</h6>
+          <div class="d-flex flex-wrap justify-content-between pt-4">
+            <div class="counter">
+              <h3 class="text-dark">{{dsses|length}}</h3>
+            </div>
+            <div class="icon">
+              <i class="fa fa-building" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="col-lg-3 col-md-6">
+        <div class="dCard mb-3 mb-lg-0">
+          <h6 class="text-muted font-weight-bold">Total Stakeholders</h6>
+          <div class="d-flex flex-wrap justify-content-between pt-4">
+            <div class="counter">
+              <h3 class="text-dark">{{stakeholders|length}}</h3>
+            </div>
+            <div class="icon">
+              <i class="fa fa-users" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="col-lg-3 col-md-6">
+      <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Courses</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{courses|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-book" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6">
+      <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Employees</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{employees_count}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-user" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<br>
+<br>
+<h2>Visualization</h2>
+<div class="row pt-4 mt-3">
+  <div class="row">
+    <div class="col-lg-3 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Committee Members by DSS</h3>
+        <canvas id="smtmsChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-3 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Trainers by DSS</h3>
+        <canvas id="trainersChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-3 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Trainees by DSS</h3>
+        <canvas id="traineesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-3 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Staffs by DSS</h3>
+        <canvas id="staffsChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Courses by Types</h3>
+        <canvas id="coursesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-8 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Stakeholders by Types</h3>
+        <canvas id="stakeholderTypesChart" class="mt-0 pt-0" height="133"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Stakeholders by Ministries</h3>
+        <canvas id="ministriesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Committee Members by DSS</h3>
+        <canvas id="trainingsChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Trainers by DSS</h3>
+        <canvas id="propertiesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Trainees by DSS</h3>
+        <canvas id="requirementsChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+var ctx = document.getElementById('stakeholderTypesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for st in stakeholderTypes %}'{{st}}',{% endfor %}],
+        datasets: [{
+            label: "# of stakeholders",
+            data: [{% for stv in stakeholderTypesValues %}{{stv}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('ministriesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for m in ministries %}'{{m}}',{% endfor %}],
+        datasets: [{
+            label: "# of stakeholders",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for mv in ministriesValues %}{{mv}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('coursesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for ct in courseTypes %}'{{ct}}',{% endfor %}],
+        datasets: [{
+            label: "# of courses",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for ctv in courseTypesValues %}{{ctv}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('smtmsChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for d in dsses %}'{{d}}',{% endfor %}],
+        datasets: [{
+            label: "# of Committee Members",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for smtm in smtms_count %}{{smtm}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('trainersChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for d in dsses %}'{{d}}',{% endfor %}],
+        datasets: [{
+            label: "# of trainers",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for trc in trainers_count %}{{trc}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('traineesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for d in dsses %}'{{d}}',{% endfor %}],
+        datasets: [{
+            label: "# of trainees",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for tec in trainees_count %}{{tec}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('staffsChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for d in dsses %}'{{d}}',{% endfor %}],
+        datasets: [{
+            label: "# of staffs",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for trc in staffs_count %}{{trc}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('trainingsChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for d in dsses %}'{{d}}',{% endfor %}],
+        datasets: [{
+            label: "# of trainings",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for tc in trainings_count %}{{tc}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('propertiesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for d in dsses %}'{{d}}',{% endfor %}],
+        datasets: [{
+            label: "# of properties",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for pc in properties_count %}{{pc}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('requirementsChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for d in dsses %}'{{d}}',{% endfor %}],
+        datasets: [{
+            label: "# of requirements",
+            backgroundColor: "rgba(255,0,0,1)",
+            data: [{% for rc in requirements_count %}{{rc}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+     $(document).ready(function(){
+        $('.dropdown-toggle').dropdown()
+    });
+</script>
+{% endblock %}

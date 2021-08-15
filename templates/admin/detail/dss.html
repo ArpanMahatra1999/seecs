@@ -1,0 +1,677 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{dss}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-building"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;DSS/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'create-dss-admin' dss.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Create DSS Admin</a>
+    <a href="{% url 'read-dss-admin' dss.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">View DSS Admins</a>
+
+</div>
+<br>
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-3">
+                {% if dss.photo %}
+                <img src="{{ dss.photo.url }}" width="300" height="300" class="rounded-circle">
+                {% else %}
+                <img src="{% static 'images/default/dss.png' %}" width="100%" height="95%" class="rounded-circle">
+                {% endif %}
+            </div>
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{dss.title}}
+                </h2>
+                {% if dss.description %}
+                {% autoescape off %}
+                <p>{{dss.description}}</p>
+                {% endautoescape %}
+                {% endif %}
+                {% if dss.phone_number %}
+                <p><i class="fa fa-phone blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Phone: {{dss.phone_number}}</p>
+                {% endif %}
+                {% if dss.date_of_establishment|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of establishment: {{dss.date_of_establishment}}</p>
+                {% endif %}
+                <p><i class="fa fa-map-marker blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;
+                    {% if dss.tole_name and dss.street_name %}
+                    {{dss.tole_name}}, {{dss.street_name}} -
+                    {% elif dss.tole_name %}
+                    {{dss.tole_name}} -
+                    {% elif dss.street_name %}
+                    {{dss.street_name}} -
+                    {% endif %}
+                    {{dss.ward_number}}, {{dss.municipality}}, {{dss.district}}, {{dss.province}}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+<div class="mx-3">
+    <h2>Committee Members</h2>
+    <input type="text" name="search" id="smtmsearch" class="form-control" placeholder="Search Committee Member"/>
+</div>
+<br>
+<div class="container-fluid table-responsive">
+    <table class="table table-hover smtm-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Date of Birth</th>
+            <th>Date of Joining</th>
+            <th>Post</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for smtm in smtms reversed %}
+        <tr>
+            <td>
+                <a href="{% url 'smtm-detail' smtm.id %}" class="underlineless">
+                    {{smtm.first_name}}
+                    {% if smtm.middle_name %}
+                    {{smtm.middle_name}}
+                    {% endif %}
+                    {{smtm.last_name}}
+                </a>
+            </td>
+            <td>{{smtm.phone_number}}</td>
+            <td>{{smtm.email}}</td>
+            <td>{{smtm.date_of_birth_AD}}
+            ({% nepali_date smtm.date_of_birth_AD %} BS)</td>
+            <td>{{smtm.date_of_joining_AD}}
+            ({% nepali_date smtm.date_of_joining_AD %} BS)</td>
+            <td>{{smtm.post}}</td>
+            <td>
+                <a href="{% url 'smtm-detail' smtm.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                <a href="{% url 'update-smtm' smtm.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                <a href="{% url 'delete-smtm' smtm.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>&nbsp;&nbsp;
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Trainers</h2>
+        <input type="text" name="search" id="trainersearch" class="form-control" placeholder="Search Trainer"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover trainer-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Date of Birth</th>
+                <th>Date of Joining</th>
+                <th>Post</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for trainer in trainers reversed %}
+            <tr>
+                <td><a href="{% url 'trainer-detail' trainer.id %}" class="underlineless">
+                    {{trainer.first_name}}
+                    {% if trainer.middle_name %}
+                    {{trainer.middle_name}}
+                    {% endif %}
+                    {{trainer.last_name}}
+                </a></td>
+                <td>{{trainer.phone_number}}</td>
+                <td>{{trainer.email}}</td>
+                <td>{{trainer.date_of_birth_AD}}
+                ({% nepali_date trainer.date_of_birth_AD %} BS)</td>
+                <td>{{trainer.date_of_joining_AD}}
+                ({% nepali_date trainer.date_of_joining_AD %} BS)</td>
+                <td>{{trainer.post}}</td>
+                <td>
+                    <a href="{% url 'trainer-detail' trainer.id %}"><i class="fa fa-info"
+                                                                           aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'update-trainer' trainer.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'delete-trainer' trainer.id %}"><i class="fa fa-trash"
+                                                                           aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Trainees</h2>
+        <input type="text" name="search" id="traineesearch" class="form-control" placeholder="Search Trainee"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover trainee-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Date of Birth</th>
+                <th>Date of Joining</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for trainee in trainees reversed %}
+            <tr>
+                <td><a href="{% url 'trainee-detail' trainee.id %}" class="underlineless">
+                    {{trainee.first_name}}
+                    {% if trainee.middle_name %}
+                    {{trainee.middle_name}}
+                    {% endif %}
+                    {{trainee.last_name}}
+                </a></td>
+                <td>{{trainee.phone_number}}</td>
+                <td>{{trainee.email}}</td>
+                <td>{{trainee.date_of_birth_AD}}
+                ({% nepali_date trainee.date_of_birth_AD %} BS)</td>
+                <td>{{trainee.date_of_joining_AD}}
+                ({% nepali_date trainee.date_of_joining_AD %} BS)</td>
+                <td>
+                    <a href="{% url 'trainee-detail' trainee.id %}"><i class="fa fa-info"
+                                                                           aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'update-trainee' trainee.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'delete-trainee' trainee.id %}"><i class="fa fa-trash"
+                                                                           aria-hidden="true"></i></a>&nbsp;&nbsp;
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Staffs</h2>
+        <input type="text" name="search" id="staffsearch" class="form-control" placeholder="Search Staff"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover staff-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Date of Birth</th>
+                <th>Date of Joining</th>
+                <th>Post</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for staff in staffs reversed %}
+            <tr>
+                <td>
+                    <a href="{% url 'staff-detail' staff.id %}" class="underlineless">
+                        {{staff.first_name}}
+                        {% if staff.middle_name %}
+                        {{staff.middle_name}}
+                        {% endif %}
+                        {{staff.last_name}}
+                    </a>
+                </td>
+                <td>{{staff.phone_number}}</td>
+                <td>{{staff.email}}</td>
+                <td>{{staff.date_of_birth_AD}}
+                ({% nepali_date staff.date_of_birth_AD %} BS)</td>
+                <td>{{staff.date_of_joining_AD}}
+                ({% nepali_date staff.date_of_joining_AD %} BS)</td>
+                <td>{{staff.post}}</td>
+                <td>
+                    <a href="{% url 'staff-detail' staff.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'update-staff' staff.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'delete-staff' staff.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Class</h2>
+        <input type="text" name="search" id="classsearch" class="form-control" placeholder="Search Class"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover class-table">
+        <thead>
+        <tr>
+            <th>Course</th>
+            <th>Date of Starting</th>
+            <th>Date of Ending</th>
+            <th>Average hours/day</th>
+            <th>Days/week</th>
+            <th>Shift</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for course_class in course_classes reversed %}
+        <tr>
+            <td>{{course_class.course}}</td>
+            <td>{{course_class.date_of_starting_AD}}
+                ({% nepali_date course_class.date_of_starting_AD %} BS)</td>
+            <td>{{course_class.date_of_ending_AD}}
+                ({% nepali_date course_class.date_of_ending_AD %} BS)</td>
+            <td>{{course_class.average_hours_per_day}}</td>
+            <td>{{course_class.days_per_week}}</td>
+            <td>{{course_class.shift}}</td>
+          <td>
+              <a href="{% url 'course-class-detail' course_class.course.id course_class.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'update-course-class' course_class.course.id course_class.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'delete-course-class' course_class.course.id course_class.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Activity</h2>
+        <input type="text" name="search" id="activityearch" class="form-control" placeholder="Search Activity"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover class-table">
+        <thead>
+        <tr>
+        <th>Title</th>
+        <th>Planned Start Date</th>
+        <th>Planned End Date</th>
+        <th>Actual Start Date</th>
+        <th>Actual End Date</th>
+        <th>Targeted Budget (in Rs.)</th>
+        <th>Actual Cost (in Rs.)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for activity in activities reversed %}
+      <tr>
+        <td><a href="{% url 'activity-detail' activity.id %}" class="underlineless">{{activity.title}}</a></td>
+        <th>{{activity.planned_start_date_AD}}
+            ({% nepali_date activity.planned_start_date_AD %} BS)</th>
+        <th>{{activity.planned_end_date_AD}}
+            ({% nepali_date activity.planned_end_date_AD %} BS)</th>
+        <th>{{activity.actual_start_date_AD}}
+            ({% nepali_date activity.actual_start_date_AD %} BS)</th>
+        <th>{{activity.actual_end_date_AD}}
+            ({% nepali_date activity.actual_end_date_AD %} BS)</th>
+        <th>{{activity.targeted_budget}}</th>
+        <th>{{activity.actual_cost}}</th>
+        <td>
+            <a href="{% url 'activity-detail' activity.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+            <a href="{% url 'update-activity' activity.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+            <a href="{% url 'delete-activity' activity.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+        </td>
+      </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Document</h2>
+        <input type="text" name="search" id="documentsearch" class="form-control" placeholder="Search Document"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover class-table">
+        <thead>
+        <tr>
+        <th>Title</th>
+        <th>Document Type</th>
+        <th>File</th>
+        <th>Date of Submission</th>
+        <th>Created on</th>
+        <th>Last updated on</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for document in documents reversed %}
+      <tr>
+          <td><a href="{% url 'document-detail' document.id %}" class="underlineless">{{document.title}}</a></td>
+          <td>{{document.document_type}}</td>
+          <td><a href="{{document.file.url}}" class="underlineless">{{document.file}}</a></td>
+          <td>{{document.date_of_submission_AD}}
+              ({% nepali_date document.date_of_submission_AD %} BS)</td>
+          <td>{{document.created_on_AD}}
+              ({% nepali_date document.created_on_AD %} BS)</td>
+          <td>{{document.last_updated_on_AD}}
+              ({% nepali_date document.last_updated_on_AD %} BS)</td>
+          <td>
+              <a href="{% url 'document-detail' document.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'update-document' document.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'delete-document' document.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+          </td>
+      </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Property</h2>
+        <input type="text" name="search" id="propertysearch" class="form-control" placeholder="Search Property"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover class-table">
+        <thead>
+        <tr>
+        <th>Title</th>
+        <th>Date of Purchase</th>
+        <th>Property Type</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for property in properties reversed %}
+      <tr>
+          <td><a href="{% url 'property-detail' property.id %}" class="underlineless">{{property.title}}</a></td>
+          <td>{{property.date_of_purchase_AD}}
+              ({% nepali_date property.date_of_purchase_AD %} BS)</td>
+          <td>{{property.property_type}}</td>
+          <td>{{property.quantity}}</td>
+          <td>{{property.unit}}</td>
+          <td>
+              <a href="{% url 'property-detail' property.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'update-property' property.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'delete-property' property.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+          </td>
+      </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Requirement</h2>
+        <input type="text" name="search" id="requirementsearch" class="form-control" placeholder="Search Requirement"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover class-table">
+        <thead>
+        <tr>
+        <th>Title</th>
+        <th>Estimated Date of Purchase</th>
+        <th>Requirement Type</th>
+        <th>Unit</th>
+        <th>Estimated Quantity</th>
+        <th>Estimated Price (in Rs.)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for requirement in requirements reversed %}
+      <tr>
+          <td><a href="{% url 'requirement-detail' requirement.id %}" class="underlineless">{{requirement.title}}</a></td>
+          <td>{{requirement.estimated_date_of_purchase_AD}}
+              ({% nepali_date requirement.estimated_date_of_purchase_AD %} BS)</td>
+          <td>{{requirement.requirement_type}}</td>
+          <td>{{requirement.unit}}</td>
+          <td>{{requirement.estimated_quantity}}</td>
+          <td>{{requirement.estimated_price}}</td>
+          <td>
+              <a href="{% url 'requirement-detail' requirement.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'update-requirement' requirement.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+              <a href="{% url 'delete-requirement' requirement.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+          </td>
+      </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+<script>
+    $(function(){
+        $('#smtmsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.smtm-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#trainersearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.trainer-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#traineesearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.trainee-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#staffsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.staff-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#classsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.class-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#activitysearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.class-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#documentsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.class-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#propertysearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.class-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#requirementsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.class-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

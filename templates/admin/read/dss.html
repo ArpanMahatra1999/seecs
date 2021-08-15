@@ -1,0 +1,121 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+Read DSS
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-building"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;DSS</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end mr-2">
+    <a href="{% url 'create-dss' %}" class="click-me no-decoration mx-2 px-4 py-2 mt-1">Create DSS</a>
+</div>
+<br>
+<div class="mx-3">
+    <input type="text" name="search" id="search" class="form-control" placeholder="Search DSS"/>
+</div>
+<br>
+<div class="container-fluid table-responsive">
+  <table class="table table-hover" id="pdfable">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Phone No.</th>
+        <th>Date of Establishment</th>
+        <th>Province</th>
+        <th>District</th>
+        <th>Municipality</th>
+        <th>Ward Number</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for dss in dsses reversed %}
+      <tr>
+        <td><a href="{% url 'dss-detail' dss.id %}" class="underlineless">{{dss.title}}</a></td>
+        <td>{{dss.phone_number}}</td>
+        <td>
+          {% if dss.date_of_establishment_AD|date:"Y-m-d" != '1975-01-01' %}
+          {{dss.date_of_establishment_AD}}
+          ({% nepali_date dss.date_of_establishment_AD %} BS)
+          {% endif %}
+        </td>
+        <td>{{dss.province}}</td>
+        <td>{{dss.district}}</td>
+        <td>{{dss.municipality}}</td>
+        <td>{{dss.ward_number}}</td>
+        <td>
+          <a href="{% url 'dss-detail' dss.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+          <a href="{% url 'read-dss-admin' dss.id %}"><i class="fa fa-user" aria-hidden="true"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" id="btnExport" value="Export PDF" />
+  <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" onclick="exportTableToExcel('pdfable', 'document')" value="Export XLS"/>
+</div>
+<script>
+    $(function(){
+        $('#search').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('th').each(function(column){
+            $(this).hover(function(){
+                $(this).data('type', $(this).attr('class'));
+                $(this).addClass('clickable');
+            }, function(){
+                $(this).removeClass('clickable');
+            });
+            $(this).click(function(){
+                var ascending = $(this).hasClass('ascending');
+                var type = $(this).data('type');
+                var records = $('table').find('tbody > tr');
+                records.sort(function(a,b){
+                    var value1 = $(a).children('td').eq(column).text();
+                    var value2 = $(b).children('td').eq(column).text();
+                    if (type == 'num'){
+                        value1 *= 1;
+                        value2 *= 1;
+                    }
+                    if(ascending){
+                      return (value1 > value2) ? -1 : (value1 < value2 ? 1: 0)
+                    }else{
+                      return (value1 < value2) ? -1 : (value1 > value2 ? 1 : 0)
+                    }
+                });
+                $(this).toggleClass('ascending');
+                $.each(records, function(index, row){
+                    $('tbody').append(row);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

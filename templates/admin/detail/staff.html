@@ -1,0 +1,126 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{staff}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-id-card"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Staff/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'update-staff' staff.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Staff</a>
+    <a href="{% url 'delete-staff' staff.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Staff</a>
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-3">
+                {% if staff.photo %}
+                <img src="{{ staff.photo.url }}" width="300" height="300" class="rounded-circle">
+                {% else %}
+                <img src="{% static 'images/default/staff.png' %}" width="300" height="300" class="rounded-circle">
+                {% endif %}
+            </div>
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{staff.first_name}} {% if staff.middle_name %}{{staff.middle_name}}{% endif %}{{staff.last_name}}
+                </h2>
+                <h5><a href="{% url 'dss-detail' staff.dss.id %}" class="underlineless">{{staff.dss}}</a></h5>
+                <p>Created by {{staff.created_by}}</p>
+                {% if staff.post %}
+                <p>{{staff.post}}</p>
+                {% endif %}
+                {% if staff.email %}
+                <p><i class="fa fa-envelope blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Email: {{staff.email}}</p>
+                {% endif %}
+                {% if staff.phone_number %}
+                <p><i class="fa fa-phone blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Phone: {{staff.phone_number}}
+                </p>
+                {% endif %}
+                {% if staff.date_of_birth_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of birth:
+                    {{staff.date_of_birth_AD}}
+                    ({% nepali_date staff.date_of_birth_AD %} BS)
+                </p>
+                {% endif %}
+                {% if staff.date_of_joining_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of joining:
+                    {{staff.date_of_joining_AD}}
+                    ({% nepali_date staff.date_of_joining_AD %} BS)</p>
+                {% endif %}
+                <br><br>
+                DEMOGRAPHICS
+                <hr>
+                Gender: {{staff.gender}}<br>
+                Marital Status: {{staff.marital_status}}<br>
+                {% if staff.migration_status %}
+                Migration Status: {{staff.migration_status}}<br>
+                {% endif %}
+                {% if staff.special_focus_group %}
+                Special Focus Group: {{staff.special_focus_group}}<br>
+                {% endif %}
+                Religion: {{staff.religion}}<br>
+                Ethnicity: {{staff.ethnicity}}<br>
+                Disability: {{staff.disability}}<br>
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        PERMANENT ADDRESS
+                        <hr>
+                        Province: {{staff.permanent_province}}<br>
+                        District: {{staff.permanent_district}}<br>
+                        Municipality: {{staff.permanent_municipality}}<br>
+                        Ward Number: {{staff.permanent_ward_number}}<br>
+                        Street Name: {{staff.permanent_street_name}}<br>
+                        Tole Name: {{staff.permanent_tole_name}}<br>
+                        House Number: {{staff.permanent_house_number}}<br>
+                        Phone Number: {{staff.permanent_phone_number}}<br>
+                    </div>
+                    <div class="col">
+                        TEMPORARY ADDRESS
+                        <hr>
+                        Province: {{staff.temporary_province}}<br>
+                        District: {{staff.temporary_district}}<br>
+                        Municipality: {{staff.temporary_municipality}}<br>
+                        Ward Number: {{staff.temporary_ward_number}}<br>
+                        Street Name: {{staff.temporary_street_name}}<br>
+                        Tole Name: {{staff.temporary_tole_name}}<br>
+                        House Number: {{staff.temporary_house_number}}<br>
+                        Phone Number: {{staff.temporary_phone_number}}<br>
+                    </div>
+                </div>
+                <br><br>
+                FAMILY
+                <hr>
+                Father's Name: {{staff.father_first_name}}{% if staff.father_middle_name %} {{staff.father_middle_name}}{% endif %} {{staff.father_last_name}}<br>
+                Mother's Name: {{staff.mother_first_name}}{% if staff.mother_middle_name %} {{staff.mother_middle_name}}{% endif %} {{staff.mother_last_name}}<br>
+                {% if staff.grandfather_first_name and staff.grandfather_last_name %}
+                Grandfather's Name: {{staff.grandfather_first_name}}{% if staff.grandfather_middle_name %}
+                {{staff.grandfather_middle_name}}{% endif %} {{staff.grandfather_last_name}}<br>
+                {% endif %}
+                {% if staff.spouse_first_name and staff.spouse_last_name %}
+                Spouse's Name: {{staff.spouse_first_name}}{% if staff.spouse_middle_name %} {{staff.spouse_middle_name}}{% endif %} {{staff.spouse_last_name}}<br>
+                {% endif %}
+                <br><br>
+                CITIZENSHIP RECORDS
+                <hr>
+                Citizenship Number: {{staff.citizenship_number}}<br>
+                Issued District: {{staff.citizenship_issued_district}}<br>
+                {% if staff.citizenship_issued_date_AD|date:"Y-m-d" != '1975-01-01' %}
+                Issued Date: {{staff.citizenship_issued_date_AD}}
+                    ({% nepali_date staff.citizenship_issued_date_AD %} BS)<br>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

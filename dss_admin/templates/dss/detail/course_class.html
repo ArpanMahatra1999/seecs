@@ -1,0 +1,301 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{course}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-file"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Class/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'dss:update-course-class' course_class.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Class</a>
+    <a href="{% url 'dss:delete-course-class' course_class.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Class</a>
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-12 px-5">
+                <h2 class="font-weight-bold">{{course_class.course}}</h2>
+                <h5>{{course_class.dss}}</h5>
+                <p>Created by {{course_class.user}}</p>
+                <p>Coordinator: {{course_class.coordinator}}</p>
+                <p>Assistant Trainer: {{course_class.assistant_trainer}}</p>
+                <p>Venue: {{course_class.venue}}</p>
+                {% if course_class.average_hours_per_day %}
+                <p>Average hours per day: {{course_class.average_hours_per_day}}</p>
+                {% endif %}
+                {% if course_class.shift %}
+                <p>Shift: {{course_class.shift}}</p>
+                {% endif %}
+                {% if course_class.days_per_week %}
+                <p>Days per week: {{course_class.days_per_week}}</p>
+                {% endif %}
+                {% if course_class.date_of_starting_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of birth:
+                    {{course_class.date_of_starting_AD}}
+                    ({% nepali_date course_class.date_of_starting_AD %} BS)
+                </p>
+                {% endif %}
+                {% if course_class.date_of_ending_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of joining:
+                    {{course_class.date_of_ending_AD}}
+                    ({% nepali_date course_class.date_of_ending_AD %} BS)</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+<div class="mx-3">
+    <h2>Trainers</h2>
+    <input type="text" name="search" id="trainersearch" class="form-control" placeholder="Search Trainer"/>
+</div>
+<br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover trainer-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for trainer in course_class.trainers.all reversed %}
+            <tr>
+                <td><a href="{% url 'trainer-detail' trainer.id %}" class="underlineless">{{trainer}}</a></td>
+                <td>{{trainer.phone_number}}</td>
+                <td>{{trainer.email}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+<div class="mx-3">
+    <h2>Trainees</h2>
+    <input type="text" name="search" id="traineesearch" class="form-control" placeholder="Search Trainee"/>
+</div>
+<br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover trainee-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for trainee in trainees reversed %}
+            <tr>
+                <td><a href="{% url 'dss:trainee-detail' trainee.id %}" class="underlineless">{{trainee}}</a></td>
+                <td>{{trainee.phone_number}}</td>
+                <td>{{trainee.email}}</td>
+                <td>
+                    <a href="{% url 'dss:create-test' course_class.id trainee.id %}"><i class="fa fa-clipboard blue-icon" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:create-employment' course_class.id trainee.id %}"><i class="fa fa-briefcase blue-icon" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:employment-log-detail' course_class.id trainee.id %}"><i class="fa fa-calendar blue-icon" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+<div class="mx-3">
+    <h2>Tests</h2>
+    <input type="text" name="search" id="testsearch" class="form-control" placeholder="Search Test"/>
+</div>
+<br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover test-table">
+            <thead>
+            <tr>
+                <th>Trainee</th>
+                <th>Symbol Number</th>
+                <th>Date of Application</th>
+                <th>Date of Exam</th>
+                <th>Date of Result</th>
+                <th>Result Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for test in tests reversed %}
+            <tr>
+                <td><a href="{% url 'dss:trainee-detail' test.trainee.id %}" class="underlineless">{{test.trainee}}</a></td>
+                <td>{{test.symbol_number}}</td>
+                <td>{% if test.date_of_application_AD|date:"Y-m-d" != '1975-01-01' %}
+                    {{test.date_of_application_AD}}
+                    ({% nepali_date test.date_of_application_AD %} BS)
+                    {% endif %}</td>
+                <td>{% if test.date_of_exam|date:"Y-m-d" != '1975-01-01' %}
+                    {{test.date_of_exam_AD}}
+                    ({% nepali_date test.date_of_exam_AD %} BS)
+                    {% endif %}</td>
+                <td>{% if test.date_of_result_AD|date:"Y-m-d" != '1975-01-01' %}
+                    {{test.date_of_result_AD}}
+                    ({% nepali_date test.date_of_result_AD %} BS){% endif %}</td>
+                <td>{{test.result_status}}</td>
+                <td>
+                    <a href="{% url 'dss:test-detail' test.course_class.id test.trainee.id test.id %}"><i class="fa fa-info"
+                                                                                          aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:update-test' test.course_class.id test.trainee.id test.id %}"><i class="fa fa-pencil"
+                                                                                          aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:delete-test' test.course_class.id test.trainee.id test.id %}"><i class="fa fa-trash"
+                                                                                          aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+<div class="mx-3">
+    <h2>Employments</h2>
+    <input type="text" name="search" id="employmentsearch" class="form-control" placeholder="Search Employment"/>
+</div>
+<br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover employment-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date of Call</th>
+                <th>Job Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for employment in employments reversed %}
+            <tr>
+                <td><a href="{% url 'dss:trainee-detail' employment.trainee.id %}" class="underlineless">{{employment.trainee}}</a></td>
+                <td>{% if employment.date_of_call_AD|date:"Y-m-d" != '1975-01-01' %}
+                    {{employment.date_of_call_AD}}
+                    ({% nepali_date employment.date_of_call_AD %} BS){% endif %}</td>
+                <td>{{employment.job_status}}</td>
+                <td>
+                    <a href="{% url 'dss:employment-detail' employment.course_class.id employment.trainee.id employment.id %}"><i class="fa fa-info"
+                                                                                                            aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:update-employment' employment.course_class.id employment.trainee.id employment.id %}"><i class="fa fa-pencil"
+                                                                                                            aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:delete-employment' employment.course_class.id employment.trainee.id employment.id %}"><i class="fa fa-trash"
+                                                                                                            aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+<script>
+    $(function(){
+        $('#trainersearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.trainer-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#traineesearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.trainee-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#testsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.test-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#employmentsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.employment-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

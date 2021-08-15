@@ -1,0 +1,212 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block title %}
+{{trainer}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-address-card"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Trainer/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'dss:create-qualification' trainer.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Create Qualification</a>
+    <a href="{% url 'dss:create-experience' trainer.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Create Experience</a>
+    <a href="{% url 'dss:update-trainer' trainer.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Trainer</a>
+    <a href="{% url 'dss:delete-trainer' trainer.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Trainer</a>
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-3">
+                {% if trainer.photo %}
+                <img src="{{ trainer.photo.url }}" width="100%" height="95%" class="rounded-circle">
+                {% else %}
+                <img src="{% static 'images/default/trainer.png' %}" width="100%" height="95%" class="rounded-circle">
+                {% endif %}
+            </div>
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{trainer.first_name}}
+                    {% if trainer.middle_name %}{{trainer.middle_name}}{% endif %}
+                    {{trainer.last_name}}
+                </h2>
+                <h5>{{trainer.dss}}</h5>
+                <p>Created by {{trainer.created_by}}</p>
+                {% if trainer.post %}
+                <p>{{trainer.post}}</p>
+                {% endif %}
+                {% if trainer.courses %}
+                <p>Courses: <br>{% for c in trainer.courses.all %}- {{c}}<br> {% endfor %}</p>
+                {% endif %}
+                {% if trainer.email %}
+                <p><i class="fa fa-envelope blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;{{trainer.email}}</p>
+                {% endif %}
+                {% if trainer.phone_number %}
+                <p><i class="fa fa-phone blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Phone: {{trainer.phone_number}}
+                </p>
+                {% endif %}
+                {% if trainer.date_of_birth_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of birth:
+                    {{trainer.date_of_birth_AD}}
+                    ({% nepali_date trainer.date_of_birth_AD %} BS)
+                </p>
+                {% endif %}
+                {% if trainer.date_of_joining_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of joining:
+                    {{trainer.date_of_joining_AD}}
+                    ({% nepali_date trainer.date_of_joining_AD %} BS)</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+<div class="mx-3">
+    <h2>Qualification</h2>
+    <input type="text" name="search" id="qualificationsearch" class="form-control" placeholder="Search Qualification"/>
+</div>
+<br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover qualification-table">
+            <thead>
+            <tr>
+                <th class="num">Id</th>
+                <th>Level</th>
+                <th>Field</th>
+                <th>Institute</th>
+                <th>Certificate</th>
+                <th>Started from</th>
+                <th>Ended on</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for qualification in qualifications reversed %}
+            <tr>
+                <td>{{qualification.id}}</td>
+                <td>{{qualification.level}}</td>
+                <td>{{qualification.field}}</td>
+                <td>{{qualification.institute}}</td>
+                <td><a href="{{ HTTP_HOST }}/media/{{qualification.certificate}}" class="underlineless">{{qualification.certificate}}</a></td>
+                <td>{% if qualification.started_from_AD|date:"Y-m-d" != '1975-01-01' %}
+                    {{qualification.started_from_AD}}
+                    ({% nepali_date qualification.started_from_AD %} BS)
+                    {% endif %}</td>
+                <td>{% if qualification.ended_on_AD|date:"Y-m-d" != '1975-01-01' %}
+                    {{qualification.ended_on_AD}}
+                    ({% nepali_date qualification.ended_on_AD %} BS)
+                    {% endif %}</td>
+                <td>
+                    <a href="{% url 'dss:update-qualification' pk=qualification.trainer.id pk1=qualification.id %}"><i
+                            class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:delete-qualification' pk=qualification.trainer.id pk1=qualification.id %}"><i
+                            class="fa fa-trash" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+<div class="mx-3">
+    <h2>Experience</h2>
+    <input type="text" name="search" id="experiencesearch" class="form-control" placeholder="Search Experience"/>
+</div>
+<br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover experience-table">
+            <thead>
+            <tr>
+                <th class="num">Id</th>
+                <th>Post</th>
+                <th>Organization</th>
+                <th>Certificate</th>
+                <th>Started from</th>
+                <th>Ended on</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for experience in experiences reversed %}
+            <tr>
+                <td>{{experience.id}}</td>
+                <td>{{experience.post}}</td>
+                <td>{{experience.organization}}</td>
+                <td><a href="{{ HTTP_HOST }}/media/{{experience.certificate}}" class="underlineless">{{experience.certificate}}</a></td>
+                <td>{% if experience.started_from_AD|date:"Y-m-d" != '1975-01-01' %}
+                    {{experience.started_from_AD}}
+                    ({% nepali_date experience.started_from_AD %} BS)
+                    {% endif %}</td>
+                <td>{% if experience.ended_on_AD|date:"Y-m-d" != '1975-01-01' %}
+                    {{experience.ended_on_AD}}
+                    ({% nepali_date experience.ended_on_AD %} BS)
+                    {% endif %}</td>
+                <td>
+                    <a href="{% url 'dss:update-experience' pk=experience.trainer.id pk1=experience.id %}"><i
+                            class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                    <a href="{% url 'dss:delete-experience' pk=experience.trainer.id pk1=experience.id %}"><i
+                            class="fa fa-trash" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+<script>
+    $(function(){
+        $('#qualificationsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.qualification-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('#experiencesearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.experience-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

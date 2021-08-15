@@ -1,0 +1,58 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+Update Class
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-book"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Course/&nbsp;Class/&nbsp;Update</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="bg-light rounded p-5">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-color1 btn-block">
+            Update Class
+        </button>
+    </form>
+</div>
+<script>
+$(function(){
+    $('#div_id_date_of_starting_BS').hide();
+    $('#div_id_date_of_ending_BS').hide();
+    $('#div_id_date_of_starting_AD').hide();
+    $('#div_id_date_of_ending_AD').hide();
+    var calendar = $('#id_calendar').val();
+    $('#div_id_date_of_starting_' + calendar1).show();
+    $('#div_id_date_of_ending_' + calendar1).show();
+    $('#id_calendar').change(function(){
+        var calendar = $(this).val();
+        $('#div_id_date_of_starting_BS').hide();
+        $('#div_id_date_of_ending_BS').hide();
+        $('#div_id_date_of_starting_AD').hide();
+        $('#div_id_date_of_ending_AD').hide();
+        $('#div_id_date_of_starting_' + calendar).show();
+        $('#div_id_date_of_ending_' + calendar).show();
+        if (calendar=='AD'){
+            $('input#id_date_of_starting_BS').val('');
+            $('input#id_date_of_ending_BS').val('');
+        }
+        else if(calendar=='BS'){
+            $('input#id_date_of_starting_AD').val('');
+            $('input#id_date_of_ending_AD').val('');
+        }
+        else{
+            $('input#id_date_of_starting_BS').val('');
+            $('input#id_date_of_ending_BS').val('');
+            $('input#id_date_of_starting_AD').val('');
+            $('input#id_date_of_ending_AD').val('');
+        }
+    })
+});
+</script>
+{% endblock %}

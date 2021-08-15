@@ -1,0 +1,15 @@
+adbs==0.0.2
+asgiref==3.3.4
+Django==3.2.4
+django-ckeditor==6.1.0
+django-crispy-forms==1.11.2
+django-filter==2.4.0
+django-js-asset==1.2.2
+django-mathfilters==1.0.0
+django-nepali-datetime-field==0.4
+nepali-datetime==1.0.6
+Pillow==8.2.0
+pyBSDate==0.3.0
+pytz==2021.1
+sqlparse==0.4.1
+typing-extensions==3.10.0.0

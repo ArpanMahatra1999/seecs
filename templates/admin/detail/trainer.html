@@ -1,0 +1,126 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{trainer}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-address-card"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Trainer/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'update-trainer' trainer.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Trainer</a>
+    <a href="{% url 'delete-trainer' trainer.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Trainer</a>
+    <a href="{% url 'read-qualification' trainer.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">View Qualifications</a>
+    <a href="{% url 'read-experience' trainer.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">View Experiences</a>
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-3">
+                {% if trainer.photo %}
+                <img src="{{ trainer.photo.url }}" width="300" height="300" class="rounded-circle">
+                {% else %}
+                <img src="{% static 'images/default/trainer.png' %}" width="300" height="300" class="rounded-circle">
+                {% endif %}
+            </div>
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{trainer.first_name}} {% if trainer.middle_name %}{{trainer.middle_name}}{% endif %}{{trainer.last_name}}
+                </h2>
+                <h5><a href="{% url 'dss-detail' trainer.dss.id %}" class="underlineless">{{trainer.dss}}</a></h5>
+                <p>Created by {{trainer.created_by}}</p>
+                {% if trainer.post %}
+                <p>Post: {{trainer.post}}</p>
+                {% endif %}
+                {% if trainer.courses %}
+                <p>Courses: <br>{% for c in trainer.courses.all %}- {{c}}<br> {% endfor %}</p>
+                {% endif %}
+                {% if trainer.email %}
+                <p><i class="fa fa-envelope blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;{{trainer.email}}</p>
+                {% endif %}
+                {% if trainer.phone_number %}
+                <p><i class="fa fa-phone blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Phone: {{trainer.phone_number}}</p>
+                {% endif %}
+                {% if trainer.date_of_birth_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of birth: {{trainer.date_of_birth_AD}}
+                ({% nepali_date trainer.date_of_birth_AD %} BS)</p>
+                {% endif %}
+                {% if trainer.date_of_joining_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of joining: {{trainer.date_of_joining_AD}}
+                ({% nepali_date trainer.date_of_joining_AD %} BS)</p>
+                {% endif %}
+                <br><br>
+                DEMOGRAPHICS
+                <hr>
+                Gender: {{trainer.gender}}<br>
+                Marital Status: {{trainer.marital_status}}<br>
+                {% if trainer.migration_status %}
+                Migration Status: {{trainer.migration_status}}<br>
+                {% endif %}
+                {% if trainer.special_focus_group %}
+                Special Focus Group: {{trainer.special_focus_group}}<br>
+                {% endif %}
+                Religion: {{trainer.religion}}<br>
+                Ethnicity: {{trainer.ethnicity}}<br>
+                Disability: {{trainer.disability}}<br>
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        PERMANENT ADDRESS
+                        <hr>
+                        Province: {{trainer.permanent_province}}<br>
+                        District: {{trainer.permanent_district}}<br>
+                        Municipality: {{trainer.permanent_municipality}}<br>
+                        Ward Number: {{trainer.permanent_ward_number}}<br>
+                        Street Name: {{trainer.permanent_street_name}}<br>
+                        Tole Name: {{trainer.permanent_tole_name}}<br>
+                        House Number: {{trainer.permanent_house_number}}<br>
+                        Phone Number: {{trainer.permanent_phone_number}}<br>
+                    </div>
+                    <div class="col">
+                        TEMPORARY ADDRESS
+                        <hr>
+                        Province: {{trainer.temporary_province}}<br>
+                        District: {{trainer.temporary_district}}<br>
+                        Municipality: {{trainer.temporary_municipality}}<br>
+                        Ward Number: {{trainer.temporary_ward_number}}<br>
+                        Street Name: {{trainer.temporary_street_name}}<br>
+                        Tole Name: {{trainer.temporary_tole_name}}<br>
+                        House Number: {{trainer.temporary_house_number}}<br>
+                        Phone Number: {{trainer.temporary_phone_number}}<br>
+                    </div>
+                </div>
+                <br><br>
+                FAMILY
+                <hr>
+                Father's Name: {{trainer.father_first_name}}{% if trainer.father_middle_name %} {{trainer.father_middle_name}}{% endif %} {{trainer.father_last_name}}<br>
+                Mother's Name: {{trainer.mother_first_name}}{% if trainer.mother_middle_name %} {{trainer.mother_middle_name}}{% endif %} {{trainer.mother_last_name}}<br>
+                {% if trainer.grandfather_first_name and trainer.grandfather_last_name %}
+                Grandfather's Name: {{trainer.grandfather_first_name}}{% if trainer.grandfather_middle_name %} {{trainer.grandfather_middle_name}}{% endif %} {{trainer.grandfather_last_name}}<br>
+                {% endif %}
+                {% if trainer.spouse_first_name and trainer.spouse_last_name %}
+                Spouse's Name: {{trainer.spouse_first_name}}{% if trainer.spouse_middle_name %} {{trainer.spouse_middle_name}}{% endif %} {{trainer.spouse_last_name}}<br>
+                {% endif %}
+                <br><br>
+                CITIZENSHIP RECORDS
+                <hr>
+                Citizenship Number: {{trainer.citizenship_number}}<br>
+                Issued District: {{trainer.citizenship_issued_district}}<br>
+                {% if trainer.citizenship_issued_date_AD|date:"Y-m-d" != '1975-01-01' %}
+                Issued Date: {{trainer.citizenship_issued_date_AD}}
+                ({% nepali_date trainer.citizenship_issued_date_AD %} BS)<br>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

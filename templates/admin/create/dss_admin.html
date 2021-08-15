@@ -1,0 +1,27 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+Create DSS Admin
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-user"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;DSS/&nbsp;DSS Admin/&nbsp;Create</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="bg-light rounded p-5">
+    <form method="post" enctype="multipart/form-data" id="addressForm" data-districts-url="{% url 'ajax_load_districts' %}" data-municipalities-url="{% url 'ajax_load_municipalities' %}" novalidate>
+        {% csrf_token %}
+        {{form.media}}
+        {{ form|crispy }}
+        {{profile_form.media}}
+        {{ profile_form|crispy }}
+        <button type="submit" class="btn btn-color1 btn-block">
+            Create DSS Admin
+        </button>
+    </form>
+</div>
+<script src="{% static 'js/person_address.js' %}"></script>
+{% endblock %}

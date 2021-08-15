@@ -1,0 +1,115 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+Read DSS Admin
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-user"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;DSS Admin</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end mr-2">
+    <a href="{% url 'dss:create-dss-admin' %}" class="click-me no-decoration mx-2 px-4 py-2 mt-1">Create DSS Admin</a>
+</div>
+<br>
+<div class="mx-3">
+    <input type="text" name="search" id="search" class="form-control" placeholder="Search DSS Admin"/>
+</div>
+<br>
+<div class="container-fluid text-right">
+  <span class="iconsize"><i class="fa fa-circle text-success"></i></span>&nbsp;&nbsp;Verified&nbsp;&nbsp;&nbsp;&nbsp;<span class="iconsize"><i class="fa fa-circle text-danger"></i></span>&nbsp;&nbsp;Unverified&nbsp;&nbsp;
+</div>
+<br>
+<div class="container-fluid table-responsive">
+  <table class="table table-hover" id="pdfable">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for dss_admin in dss_admins reversed %}
+      <tr>
+        <td>{{dss_admin.user}}&nbsp;&nbsp;
+          <span class="iconsize">
+            {% if dss_admin.user.is_active %}
+            <i class="fa fa-circle text-success"></i>
+            {% else %}
+            <i class="fa fa-circle text-danger"></i>
+            {% endif %}
+          </span>
+        </td>
+        <td>
+          <a href="{% url 'dss:dss-admin-detail' dss_admin.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" id="btnExport" value="Export PDF" />
+  <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" onclick="exportTableToExcel('pdfable', 'document')" value="Export XLS"/>
+</div>
+<script>
+    $(function(){
+        $('#search').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('th').each(function(column){
+            $(this).hover(function(){
+                $(this).data('type', $(this).attr('class'));
+                $(this).addClass('clickable');
+            }, function(){
+                $(this).removeClass('clickable');
+            });
+            $(this).click(function(){
+                var ascending = $(this).hasClass('ascending');
+                var type = $(this).data('type');
+                var records = $('table').find('tbody > tr');
+                records.sort(function(a,b){
+                    var value1 = $(a).children('td').eq(column).text();
+                    var value2 = $(b).children('td').eq(column).text();
+                    if (type == 'num'){
+                        value1 *= 1;
+                        value2 *= 1;
+                    }
+                    if(ascending){
+                      return (value1 > value2) ? -1 : (value1 < value2 ? 1: 0)
+                    }else{
+                      return (value1 < value2) ? -1 : (value1 > value2 ? 1 : 0)
+                    }
+                });
+                $(this).toggleClass('ascending');
+                $.each(records, function(index, row){
+                    $('tbody').append(row);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

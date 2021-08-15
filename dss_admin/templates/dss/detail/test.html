@@ -1,0 +1,67 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block title %}
+{{test}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-clipboard"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Class/&nbsp;Test/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <a href="{% url 'dss:update-test' test.course_class.id test.trainee.id test.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Test</a>
+    <a href="{% url 'dss:delete-test' test.course_class.id test.trainee.id test.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Test</a>
+</div>
+<br>
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-3">
+                <img src="{{ test.trainee.photo.url }}" width="300" height="300" class="rounded-circle">
+            </div>
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{test.trainee.first_name}}
+                    {% if test.trainee.middle_name %}{{test.trainee.middle_name}}{% endif %}
+                    {{test.trainee.last_name}}
+                </h2>
+                <p>Registration number: {{test.registration_number}}</p>
+                <p>Symbol number: {{test.symbol_number}}</p>
+                {% if test.trainee.email %}
+                <p><i class="fa fa-envelope blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;{{test.trainee.email}}</p>
+                {% endif %}
+                {% if test.trainee.phone_number %}
+                <p><i class="fa fa-phone blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Phone: {{test.trainee.phone_number}}
+                </p>
+                {% endif %}
+                {% if test.date_of_application_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of application:
+                    {{test.date_of_application_AD}}
+                    ({% nepali_date test.date_of_application_AD %} BS)
+                </p>
+                {% endif %}
+                {% if test.date_of_exam_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of exam:
+                    {{test.date_of_exam_AD}}
+                    ({% nepali_date test.date_of_exam_AD %} BS)</p>
+                {% endif %}
+                {% if test.date_of_result_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of result:
+                    {{test.date_of_result_AD}}
+                    ({% nepali_date test.date_of_result_AD %} BS)</p>
+                {% endif %}
+                <p>Class: {{test.course_class}}</p>
+                {% if test.result_status %}
+                <p>Result Status: {{test.result_status}}</p>
+                {% endif %}
+                {% if test.remark %}
+                <p>Remark: {{test.remark}}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+Read Trainees
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-id-badge"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Trainee</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end mr-2">
+    <a href="{% url 'dss:create-trainee' %}" class="click-me no-decoration mx-2 px-4 py-2 mt-1">Create Trainee</a>
+</div>
+<br>
+<div class="mx-3">
+    <input type="text" name="search" id="search" class="form-control" placeholder="Search Trainee"/>
+</div>
+<div class="mx-3 mt-4">
+    <select name="province" id="province">
+        <option value="" selected>Select Province</option>
+        <option value="Province 1">Province 1</option>
+        <option value="Province 2">Province 2</option>
+        <option value="Bagmati Province">Bagmati Province</option>
+        <option value="Gandaki Province">Gandaki Province</option>
+        <option value="Lumbini Province">Lumbini Province</option>
+        <option value="Karnali Province">Karnali Province</option>
+        <option value="Sudurpashchim Province">Sudurpashchim Province</option>
+    </select>
+    <select name='district' id="district">
+    </select>
+    <select name='municipality' id="municipality">
+    </select>
+</div>
+<br>
+<div class="container-fluid table-responsive">
+  <table class="table table-hover" id="pdfable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone Number</th>
+        <th>Gender</th>
+        <th>Marital Status</th>
+        <th>Religion</th>
+        <th>Ethnicity</th>
+        <th>Disability</th>
+        <th>Province</th>
+        <th>District</th>
+        <th>Municipality</th>
+        <th>Ward Number</th>
+        <th>Created by</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for trainee in trainees reversed %}
+      <tr>
+        <td><a href="{% url 'dss:trainee-detail' trainee.id %}" class="underlineless">
+          {{trainee.first_name}}
+          {% if trainee.middle_name %}
+          {{trainee.middle_name}}
+          {% endif %}
+          {{trainee.last_name}}
+        </a></td>
+        <td>{{trainee.phone_number}}</td>
+        <td>{{trainee.gender}}</td>
+        <td>{{trainee.marital_status}}</td>
+        <td>{{trainee.religion}}</td>
+        <td>{{trainee.ethnicity}}</td>
+        <td>{{trainee.disability}}</td>
+        <td>{{trainee.temporary_province}}</td>
+        <td>{{trainee.temporary_district}}</td>
+        <td>{{trainee.temporary_municipality}}</td>
+        <td>{{trainee.temporary_ward_number}}</td>
+        <td>{{trainee.created_by}}</td>
+        <td>
+          <a href="{% url 'dss:trainee-detail' trainee.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;
+          &nbsp;<a href="{% url 'dss:update-trainee' trainee.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;
+          &nbsp;<a href="{% url 'dss:delete-trainee' trainee.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+    <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" id="btnExport" value="Export PDF" />
+    <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" onclick="exportTableToExcel('pdfable', 'document')" value="Export XLS"/>
+</div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="{% static 'js/filter_data.js' %}"></script>
+<script>
+    $(function(){
+        $('#search').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('th').each(function(column){
+            $(this).hover(function(){
+                $(this).data('type', $(this).attr('class'));
+                $(this).addClass('clickable');
+            }, function(){
+                $(this).removeClass('clickable');
+            });
+            $(this).click(function(){
+                var ascending = $(this).hasClass('ascending');
+                var type = $(this).data('type');
+                var records = $('table').find('tbody > tr');
+                records.sort(function(a,b){
+                    var value1 = $(a).children('td').eq(column).text();
+                    var value2 = $(b).children('td').eq(column).text();
+                    if (type == 'num'){
+                        value1 *= 1;
+                        value2 *= 1;
+                    }
+                    if(ascending){
+                      return (value1 > value2) ? -1 : (value1 < value2 ? 1: 0)
+                    }else{
+                      return (value1 < value2) ? -1 : (value1 > value2 ? 1 : 0)
+                    }
+                });
+                $(this).toggleClass('ascending');
+                $.each(records, function(index, row){
+                    $('tbody').append(row);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

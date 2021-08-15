@@ -1,0 +1,58 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+Update Experience
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-address-card"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Trainer/&nbsp;Experience/&nbsp;Update</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="bg-light rounded p-5">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-color1 btn-block">
+            Update Experience
+        </button>
+    </form>
+</div>
+<script>
+$(function(){
+    $('#div_id_started_from_BS').hide();
+    $('#div_id_ended_on_BS').hide();
+    $('#div_id_started_from_AD').hide();
+    $('#div_id_ended_on_AD').hide();
+    var calendar1 = $('#id_calendar').val();
+    $('#div_id_started_from_' + calendar1).show();
+    $('#div_id_ended_on_' + calendar1).show();
+    $('#id_calendar').change(function(){
+        var calendar = $(this).val();
+        $('#div_id_started_from_BS').hide();
+        $('#div_id_ended_on_BS').hide();
+        $('#div_id_started_from_AD').hide();
+        $('#div_id_ended_on_AD').hide();
+        $('#div_id_started_from_' + calendar).show();
+        $('#div_id_ended_on_' + calendar).show();
+        if (calendar=='AD'){
+            $('input#id_started_from_BS').val('');
+            $('input#id_ended_on_BS').val('');
+        }
+        else if(calendar=='BS'){
+            $('input#id_started_from_AD').val('');
+            $('input#id_ended_on_AD').val('');
+        }
+        else{
+            $('input#id_started_from_BS').val('');
+            $('input#id_ended_on_BS').val('');
+            $('input#id_started_from_AD').val('');
+            $('input#id_ended_on_AD').val('');
+        }
+    })
+});
+</script>
+{% endblock %}

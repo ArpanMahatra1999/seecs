@@ -1,0 +1,126 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block title %}
+Read Qualifications
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-address-card"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Trainer/&nbsp;Qualification</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end mr-2">
+    <a href="{% url 'create-qualification' trainer.id %}" class="click-me no-decoration mx-2 px-4 py-2 mt-1">Create Qualification</a>
+</div>
+<br>
+<div class="mx-3">
+    <input type="text" name="search" id="search" class="form-control" placeholder="Qualification"/>
+</div>
+<br>
+<div class="container-fluid table-responsive">
+  <table class="table table-hover" id="pdfable">
+    <thead>
+      <tr>
+        <th>Level</th>
+        <th>Field</th>
+        <th>Institute</th>
+        <th>Shift</th>
+        <th>Certificate</th>
+        <th>Started From</th>
+        <th>Ended On</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for qualification in qualifications reversed %}
+      <tr>
+        <td>{{qualification.level}}</td>
+        <td>{{qualification.field}}</td>
+        <td>{{qualification.institute}}</td>
+        <td>{{qualification.shift}}</td>
+        <td><a href="{{ HTTP_HOST }}/media/{{qualification.certificate}}" class="underlineless">{{qualification.certificate}}</a></td>
+        <td>
+          {% if qualification.started_from_AD|date:"Y-m-d" != '1975-01-01' %}
+          {{qualification.started_from_AD}}
+          ({% nepali_date qualification.started_from_AD %} BS)
+          {% endif %}
+        </td>
+        <td>
+          {% if qualification.ended_on_AD|date:"Y-m-d" != '1975-01-01' %}
+          {{qualification.ended_on_AD}}
+          ({% nepali_date qualification.ended_on_AD %} BS)
+          {% endif %}
+        </td>
+        <td>
+            <a href="{% url 'qualification-detail' trainer.id qualification.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+            <a href="{% url 'update-qualification' trainer.id qualification.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+            <a href="{% url 'delete-qualification' trainer.id qualification.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" id="btnExport" value="Export PDF" />
+  <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" onclick="exportTableToExcel('pdfable', 'document')" value="Export XLS"/>
+</div>
+<script>
+    $(function(){
+        $('#search').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('th').each(function(column){
+            $(this).hover(function(){
+                $(this).data('type', $(this).attr('class'));
+                $(this).addClass('clickable');
+            }, function(){
+                $(this).removeClass('clickable');
+            });
+            $(this).click(function(){
+                var ascending = $(this).hasClass('ascending');
+                var type = $(this).data('type');
+                var records = $('table').find('tbody > tr');
+                records.sort(function(a,b){
+                    var value1 = $(a).children('td').eq(column).text();
+                    var value2 = $(b).children('td').eq(column).text();
+                    if (type == 'num'){
+                        value1 *= 1;
+                        value2 *= 1;
+                    }
+                    if(ascending){
+                      return (value1 > value2) ? -1 : (value1 < value2 ? 1: 0)
+                    }else{
+                      return (value1 < value2) ? -1 : (value1 > value2 ? 1 : 0)
+                    }
+                });
+                $(this).toggleClass('ascending');
+                $.each(records, function(index, row){
+                    $('tbody').append(row);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

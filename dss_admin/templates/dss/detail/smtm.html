@@ -1,0 +1,134 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{smtm}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-address-card-o"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Committee Member/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'dss:update-smtm' smtm.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Committee Member</a>
+    <a href="{% url 'dss:delete-smtm' smtm.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Committee Member</a>
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-3">
+                {% if smtm.photo %}
+                <img src="{{ smtm.photo.url }}" width="300" height="300" class="rounded-circle">
+                {% else %}
+                <img src="{% static 'images/default/smtm.png' %}" width="300" height="300" class="rounded-circle">
+                {% endif %}
+            </div>
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{smtm.first_name}} {% if smtm.middle_name %}{{smtm.middle_name}}{% endif %}{{smtm.last_name}}
+                </h2>
+                <b>
+                    {% if smtm.smc_member and smtm.eicc_member %}
+                    SMC Member & EICC Member
+                    {% elif smtm.smc_member %}
+                    SMC Member
+                    {% elif smtm.eicc_member %}
+                    EICC Member
+                    {% endif %}
+                </b>
+                <h5>{{smtm.dss}}</h5>
+                <p>Created by {{smtm.created_by}}</p>
+                {% if smtm.post %}
+                <p>{{smtm.post}}</p>
+                {% endif %}
+                {% if smtm.email %}
+                <p><i class="fa fa-envelope blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Email: {{smtm.email}}</p>
+                {% endif %}
+                {% if smtm.phone_number %}
+                <p><i class="fa fa-phone blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Phone: {{smtm.phone_number}}
+                </p>
+                {% endif %}
+                {% if smtm.date_of_birth_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of birth:
+                    {{smtm.date_of_birth_AD}}
+                    ({% nepali_date smtm.date_of_birth_AD %} BS)
+                </p>
+                {% endif %}
+                {% if smtm.date_of_joining_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of joining:
+                    {{smtm.date_of_joining_AD}}
+                    ({% nepali_date smtm.date_of_joining_AD %} BS)</p>
+                {% endif %}
+                <br><br>
+                DEMOGRAPHICS
+                <hr>
+                Gender: {{smtm.gender}}<br>
+                Marital Status: {{smtm.marital_status}}<br>
+                {% if smtm.migration_status %}
+                Migration Status: {{smtm.migration_status}}<br>
+                {% endif %}
+                {% if smtm.special_focus_group %}
+                Special Focus Group: {{smtm.special_focus_group}}<br>
+                {% endif %}
+                Religion: {{smtm.religion}}<br>
+                Ethnicity: {{smtm.ethnicity}}<br>
+                Disability: {{smtm.disability}}<br>
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        PERMANENT ADDRESS
+                        <hr>
+                        Province: {{smtm.permanent_province}}<br>
+                        District: {{smtm.permanent_district}}<br>
+                        Municipality: {{smtm.permanent_municipality}}<br>
+                        Ward Number: {{smtm.permanent_ward_number}}<br>
+                        Street Name: {{smtm.permanent_street_name}}<br>
+                        Tole Name: {{smtm.permanent_tole_name}}<br>
+                        House Number: {{smtm.permanent_house_number}}<br>
+                        Phone Number: {{smtm.permanent_phone_number}}<br>
+                    </div>
+                    <div class="col">
+                        TEMPORARY ADDRESS
+                        <hr>
+                        Province: {{smtm.temporary_province}}<br>
+                        District: {{smtm.temporary_district}}<br>
+                        Municipality: {{smtm.temporary_municipality}}<br>
+                        Ward Number: {{smtm.temporary_ward_number}}<br>
+                        Street Name: {{smtm.temporary_street_name}}<br>
+                        Tole Name: {{smtm.temporary_tole_name}}<br>
+                        House Number: {{smtm.temporary_house_number}}<br>
+                        Phone Number: {{smtm.temporary_phone_number}}<br>
+                    </div>
+                </div>
+                <br><br>
+                FAMILY
+                <hr>
+                Father's Name: {{smtm.father_first_name}}{% if smtm.father_middle_name %} {{smtm.father_middle_name}}{% endif %} {{smtm.father_last_name}}<br>
+                Mother's Name: {{smtm.mother_first_name}}{% if smtm.mother_middle_name %} {{smtm.mother_middle_name}}{% endif %} {{smtm.mother_last_name}}<br>
+                {% if smtm.grandfather_first_name and smtm.grandfather_last_name %}
+                Grandfather's Name: {{smtm.grandfather_first_name}}{% if smtm.grandfather_middle_name %} {{smtm.grandfather_middle_name}}{% endif %} {{smtm.grandfather_last_name}}<br>
+                {% endif %}
+                {% if smtm.spouse_first_name and smtm.spouse_last_name %}
+                Spouse's Name: {{smtm.spouse_first_name}}{% if smtm.spouse_middle_name %} {{smtm.spouse_middle_name}}{% endif %} {{smtm.spouse_last_name}}<br>
+                {% endif %}
+                <br><br>
+                CITIZENSHIP RECORDS
+                <hr>
+                Citizenship Number: {{smtm.citizenship_number}}<br>
+                Issued District: {{smtm.citizenship_issued_district}}<br>
+                {% if smtm.citizenship_issued_date_AD|date:"Y-m-d" != '1975-01-01' %}
+                Issued Date: {{smtm.citizenship_issued_date_AD}}
+                            ({% nepali_date smtm.citizenship_issued_date_AD %} BS)<br>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

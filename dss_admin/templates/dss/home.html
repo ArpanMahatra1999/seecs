@@ -1,0 +1,571 @@
+{% extends 'dashboard.html' %}
+{% block title %}
+DSS Home
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-tachometer"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Dashboard</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row float-right">
+<div class="dropdown">
+  <button class="click-me no-decoration mr-5">Create</button>
+  <div>
+    <a href="{% url 'dss:create-course-class' %}">Class</a>
+    <a href="{% url 'dss:create-smtm' %}">Committee Member</a>
+    <a href="{% url 'dss:create-trainer' %}">Trainer</a>
+    <a href="{% url 'dss:create-trainee' %}">Trainee</a>
+    <a href="{% url 'dss:create-staff' %}">Staff</a>
+    <a href="{% url 'dss:create-training' %}">Capacity Building</a>
+    <a href="{% url 'dss:create-activity' %}">Activity</a>
+    <a href="{% url 'dss:create-document' %}">Document</a>
+    <a href="{% url 'dss:create-property' %}">Property</a>
+    <a href="{% url 'dss:create-requirement' %}">Requirement</a>
+  </div>
+</div>
+</div>
+<br>
+<h2>Overview</h2>
+<div class="row pt-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Committee Members</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{smtms|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-address-card-o" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6 mb-3">
+    <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Trainers</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{trainers|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-address-card" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6 mb-3">
+    <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Trainees</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{trainees|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-id-badge" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6 mb-3">
+      <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Staffs</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{staffs|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-id-card" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6 mb-3">
+      <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Classes</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{course_classes|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-file" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6 mb-3">
+      <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Activities</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{activities|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6 mb-3">
+       <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Documents</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{documents|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-file-text" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-lg-3 col-md-6 mb-3">
+      <div class="dCard mb-3 mb-lg-0">
+        <h6 class="text-muted font-weight-bold">Total Trainings</h6>
+        <div class="d-flex flex-wrap justify-content-between pt-4">
+          <div class="counter">
+            <h3 class="text-dark">{{trainings|length}}</h3>
+          </div>
+          <div class="icon">
+            <i class="fa fa-sticky-note-o" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<br>
+<br>
+<h2>Visualization</h2>
+<div class="row pt-4 mt-3">
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Classes by Course Type</h3>
+        <canvas id="courseTypesChart" class="mt-0 pt-0" height="133"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Associated People</h3>
+        <canvas id="peopleTypesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row pt-4 mt-3">
+  <div class="row">
+    <div class="col-lg-12 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Documents by Type</h3>
+        <canvas id="documentTypesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row pt-4 mt-3">
+  <div class="row">
+    <div class="col-lg-12 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Properties by Type</h3>
+        <canvas id="propertyTypesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row pt-4 mt-3">
+  <div class="row">
+    <div class="col-lg-12 mb-4">
+      <div class="dCard">
+        <h3 class="text-muted">Requirements by Type</h3>
+        <canvas id="requirementTypesChart" class="mt-0 pt-0" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(function(){
+var ctx = document.getElementById('courseTypesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for c in courses %}'{{c}}',{% endfor %}],
+        datasets: [{
+            label: "# of courses",
+            data: [{% for ccbt in course_classes_by_type %}{{ccbt}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('peopleTypesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for p in people %}'{{p}}',{% endfor %}],
+        datasets: [{
+            label: "# of people",
+            data: [{% for pbt in people_by_type %}{{pbt}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('documentTypesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for dt in document_types %}'{{dt}}',{% endfor %}],
+        datasets: [{
+            label: "# of documents",
+            data: [{% for dbt in documents_by_type %}{{dbt}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('propertyTypesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for pt in property_types %}'{{pt}}',{% endfor %}],
+        datasets: [{
+            label: "# of properties",
+            data: [{% for pbt in property_by_type %}{{pbt}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+<script>
+$(function(){
+var ctx = document.getElementById('requirementTypesChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for rt in requirement_types %}'{{rt}}',{% endfor %}],
+        datasets: [{
+            label: "# of requirements",
+            data: [{% for rbt in requirement_by_type %}{{rbt}},{% endfor %}],
+            backgroundColor: [
+                'rgba(150, 0, 0, 0.88)',
+                'rgba(225, 100, 100, 0.88)',
+                'rgba(175, 100, 0, 0.88)',
+                'rgba(0, 125, 100, 0.88)',
+                'rgba(125, 0, 0, 0.88)',
+                'rgba(25, 0, 0, 0.88)',
+                'rgba(0, 25, 0, 0.88)',
+                'rgba(200, 100, 0, 0.88)',
+                'rgba(100, 0, 25, 0.88)',
+                'rgba(100, 0, 200, 0.88)',
+                'rgba(0, 100, 0, 0.88)',
+                'rgba(100, 0, 250, 0.88)',
+                'rgba(0, 225, 0, 0.88)',
+                'rgba(0, 100, 100, 0.88)',
+                'rgba(0, 225, 100, 0.88)',
+                'rgba(225, 0, 0, 0.88)',
+                'rgba(100, 0, 0, 0.88)',
+                'rgba(75, 0, 0, 0.88)',
+                'rgba(0, 175, 100, 0.88)',
+                'rgba(0, 50, 0, 0.88)',
+                'rgba(0, 75, 0, 0.88)',
+                'rgba(100, 0, 75, 0.88)',
+                'rgba(0, 250, 0, 0.88)',
+                'rgba(0, 0, 25, 0.88)',
+                'rgba(0, 200, 0, 0.88)',
+                'rgba(200, 0, 0, 0.88)',
+                'rgba(0, 125, 0, 0.88)',
+                'rgba(0, 175, 0, 0.88)',
+                'rgba(0, 0, 50, 0.88)',
+                'rgba(0, 0, 75, 0.88)',
+                'rgba(0, 0, 100, 0.88)',
+                'rgba(100, 0, 225, 0.88)',
+                'rgba(100, 0, 100, 0.88)',
+                'rgba(100, 0, 150, 0.88)',
+                'rgba(0, 0, 225, 0.88)',
+                'rgba(150, 100, 0, 0.88)',
+                'rgba(100, 0, 50, 0.88)',
+                'rgba(0, 0, 125, 0.88)',
+                'rgba(0, 0, 150, 0.88)',
+                'rgba(75, 100, 0, 0.88)',
+                'rgba(100, 0, 125, 0.88)',
+                'rgba(0, 50, 100, 0.88)',
+                'rgba(0, 75, 100, 0.88)',
+                'rgba(50, 0, 0, 0.88)',
+                'rgba(0, 150, 0, 0.88)',
+                'rgba(250, 0, 0, 0.88)',
+                'rgba(0, 0, 175, 0.88)',
+                'rgba(0, 0, 200, 0.88)',
+                'rgba(250, 100, 100, 0.88)',
+                'rgba(25, 100, 0, 0.88)',
+                'rgba(0, 150, 100, 0.88)',
+                'rgba(50, 100, 0, 0.88)',
+                'rgba(0, 200, 100, 0.88)',
+                'rgba(175, 0, 0, 0.88)',
+                'rgba(0, 0, 250, 0.88)',
+                'rgba(100, 0, 175, 0.88)',
+                'rgba(125, 100, 0, 0.88)',
+                'rgba(100, 100, 0, 0.88)',
+                'rgba(0, 250, 100, 0.88)',
+                'rgba(0, 25, 100, 0.88)',
+            ],
+        }]
+    },
+});
+});
+</script>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{trainee}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-id-badge"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Trainee/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'update-trainee' trainee.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Trainee</a>
+    <a href="{% url 'delete-trainee' trainee.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Trainee</a>
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-3">
+                {% if trainee.photo %}
+                <img src="{{ trainee.photo.url }}" width="300" height="300" class="rounded-circle">
+                {% else %}
+                <img src="{% static 'images/default/trainee.png' %}" width="300" height="300" class="rounded-circle">
+                {% endif %}
+            </div>
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{trainee.first_name}} {% if trainee.middle_name %}{{trainee.middle_name}}{% endif %}{{trainee.last_name}}
+                </h2>
+                <h5><a href="{% url 'dss-detail' trainee.dss.id %}" class="underlineless">{{trainee.dss}}</a></h5>
+                <p>Created by {{trainee.created_by}}</p>
+                <p>Class: {{trainee.course_class}}</p>
+                {% if trainee.email %}
+                <p><i class="fa fa-envelope blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;{{trainee.email}}</p>
+                {% endif %}
+                {% if trainee.phone_number %}
+                <p><i class="fa fa-phone blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Phone: {{trainee.phone_number}}</p>
+                {% endif %}
+                {% if trainee.date_of_birth_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of birth: {{trainee.date_of_birth_AD}}
+                ({% nepali_date trainee.date_of_birth_AD %} BS)</p>
+                {% endif %}
+                {% if trainee.date_of_joining_AD|date:"Y-m-d" != '1975-01-01' %}
+                <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Date of joining: {{trainee.date_of_joining_AD}}
+                ({% nepali_date trainee.date_of_joining_AD %} BS)</p>
+                {% endif %}
+                <br><br>
+                DEMOGRAPHICS
+                <hr>
+                Gender: {{trainee.gender}}<br>
+                Marital Status: {{trainee.marital_status}}<br>
+                {% if trainee.migration_status %}
+                Migration Status: {{trainee.migration_status}}<br>
+                {% endif %}
+                {% if trainee.special_focus_group %}
+                Special Focus Group: {{trainee.special_focus_group}}<br>
+                {% endif %}
+                Religion: {{trainee.religion}}<br>
+                Ethnicity: {{trainee.ethnicity}}<br>
+                Disability: {{trainee.disability}}<br>
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        PERMANENT ADDRESS
+                        <hr>
+                        Province: {{trainee.permanent_province}}<br>
+                        District: {{trainee.permanent_district}}<br>
+                        Municipality: {{trainee.permanent_municipality}}<br>
+                        Ward Number: {{trainee.permanent_ward_number}}<br>
+                        Street Name: {{trainee.permanent_street_name}}<br>
+                        Tole Name: {{trainee.permanent_tole_name}}<br>
+                        House Number: {{trainee.permanent_house_number}}<br>
+                        Phone Number: {{trainee.permanent_phone_number}}<br>
+                    </div>
+                    <div class="col">
+                        TEMPORARY ADDRESS
+                        <hr>
+                        Province: {{trainee.temporary_province}}<br>
+                        District: {{trainee.temporary_district}}<br>
+                        Municipality: {{trainee.temporary_municipality}}<br>
+                        Ward Number: {{trainee.temporary_ward_number}}<br>
+                        Street Name: {{trainee.temporary_street_name}}<br>
+                        Tole Name: {{trainee.temporary_tole_name}}<br>
+                        House Number: {{trainee.temporary_house_number}}<br>
+                        Phone Number: {{trainee.temporary_phone_number}}<br>
+                    </div>
+                </div>
+                <br><br>
+                FAMILY
+                <hr>
+                Father's Name: {{trainee.father_first_name}}{% if trainee.father_middle_name %} {{trainee.father_middle_name}}{% endif %} {{trainee.father_last_name}}<br>
+                Mother's Name: {{trainee.mother_first_name}}{% if trainee.mother_middle_name %} {{trainee.mother_middle_name}}{% endif %} {{trainee.mother_last_name}}<br>
+                {% if trainee.grandfather_first_name and trainee.grandfather_last_name %}
+                Grandfather's Name: {{trainee.grandfather_first_name}}{% if trainee.grandfather_middle_name %}
+                {{trainee.grandfather_middle_name}}{% endif %} {{trainee.grandfather_last_name}}<br>
+                {% endif %}
+                {% if trainee.spouse_first_name and trainee.spouse_last_name %}
+                Spouse's Name: {{trainee.spouse_first_name}}{% if trainee.spouse_middle_name %} {{trainee.spouse_middle_name}}{% endif %} {{trainee.spouse_last_name}}<br>
+                {% endif %}
+                <br><br>
+                TRAINEE INFORMATION
+                <hr>
+                Source of Information: {{trainee.source_of_information}}<br>
+                Has taken similar training before: {{trainee.has_taken_similar_training_before}}<br>
+                Training status: {{trainee.training_status}}<br>
+                Certification Type: {{trainee.certification_type}}<br>
+                Registration Number: {{trainee.registration_number}}
+                <br><br>
+                CITIZENSHIP RECORDS
+                <hr>
+                Citizenship Number: {{trainee.citizenship_number}}<br>
+                Issued District: {{trainee.citizenship_issued_district}}<br>
+                {% if trainee.citizenship_issued_date_AD|date:"Y-m-d" != '1975-01-01' %}
+                Issued Date: {{trainee.citizenship_issued_date_AD}}
+                ({% nepali_date trainee.citizenship_issued_date_AD %} BS)<br>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

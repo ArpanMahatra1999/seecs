@@ -1,0 +1,30 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+Delete Trainer
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-address-card"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Trainer/&nbsp;Delete</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <div class="bg-light rounded p-5">
+            <form method="POST">
+                <!-- Security token by Django -->
+                {% csrf_token %}
+                <h2>Q. Do you want to delete this trainer?</h2>
+                <br>
+                <input type="submit" value="Yes" class="rounded negative px-4"/>&nbsp;&nbsp;
+                <a href="{% url 'read-trainer' %}" type="button" class="rounded positive">&nbsp;Cancel&nbsp;</a>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-3"></div>
+</div>
+{% endblock %}

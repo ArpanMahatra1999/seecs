@@ -1,0 +1,93 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{dss_admin}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-user"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;DSS Admin/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+</div>
+<br>
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-9 px-5">
+                <h2 class="font-weight-bold">
+                    {{dss_admin.user}}&nbsp;&nbsp;{% if dss_admin.user.is_active %}<i class="fa fa-circle text-success"></i>{% else %}<i class="fa fa-circle text-danger"></i>{% endif %}
+                </h2>
+                <h5>{{dss_admin.dss}}
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mx-3 mt-5">
+    <div class="mx-3">
+        <h2>Classes</h2>
+        <input type="text" name="search" id="classsearch" class="form-control" placeholder="Search Class"/>
+    </div>
+    <br>
+    <div class="container-fluid table-responsive">
+        <table class="table table-hover class-table">
+        <thead>
+        <tr>
+        <th>Course</th>
+        <th>Date of Starting</th>
+        <th>Date of Ending</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for cc in course_classes reversed %}
+      <tr>
+          <td>{{cc.course}}</td>
+          <td>{% if cc.date_of_starting_AD|date:"Y-m-d" != '1975-01-01' %}
+              {{cc.date_of_starting_AD}}
+              ({% nepali_date cc.date_of_starting_AD %} BS)
+              {% endif %}</td>
+          <td>{% if cc.date_of_ending_AD|date:"Y-m-d" != '1975-01-01' %}
+              {{cc.date_of_ending_AD}}
+              ({% nepali_date cc.date_of_ending_AD %} BS)
+              {% endif %}</td>
+          <td>
+              <a href="{% url 'dss:course-class-detail' cc.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+          </td>
+      </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+<script>
+    $(function(){
+        $('#classsearch').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table.class-table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

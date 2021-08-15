@@ -1,0 +1,135 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block title %}
+Read Test
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-clipboard"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Class/&nbsp;Test</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="mx-3">
+    <input type="text" name="search" id="search" class="form-control" placeholder="Search Test"/>
+</div>
+<br>
+<div class="container-fluid table-responsive">
+    <table class="table table-hover" id="pdfable">
+        <thead>
+        <tr>
+            <th class="num">Id</th>
+            <th>Registration Number</th>
+            <th>Symbol Number</th>
+            <th>Date of Application</th>
+            <th>Date of Examination</th>
+            <th>Date of Result</th>
+            <th>Result Status</th>
+            <th>Remark</th>
+            <th>Course</th>
+            <th>Trainee</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for test in tests reversed %}
+        {% if test.trainee.course_class == required_course_class %}
+        <tr>
+            <td>{{test.id}}</td>
+            <td>{{test.registration_number}}</td>
+            <td>{{test.symbol_number}}</td>
+            <td>
+                {% if test.date_of_application_AD|date:"Y-m-d" != '1975-01-01' %}
+                {{test.date_of_application_AD}}
+                ({% nepali_date test.date_of_application_AD %} BS)
+                {% endif %}
+            </td>
+            <td>
+                {% if test.date_of_exam_AD|date:"Y-m-d" != '1975-01-01' %}
+                {{test.date_of_exam_AD}}
+                ({% nepali_date test.date_of_exam_AD %} BS)
+                {% endif %}
+            </td>
+            <td>
+                {% if test.date_of_result_AD|date:"Y-m-d" != '1975-01-01' %}
+                {{test.date_of_result_AD}}
+                ({% nepali_date test.date_of_result_AD %} BS)
+                {% endif %}
+            </td>
+            <td>{{test.result_status}}</td>
+            <td>{{test.remark}}</td>
+            <td>{{test.course_class}}</td>
+            <td>{{test.trainee}}</td>
+            <td>
+                <a href="{% url 'dss:test-detail' test.course_class.id test.id %}"><i class="fa fa-info" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                <a href="{% url 'dss:update-test' test.course_class.id test.id %}"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                <a href="{% url 'dss:delete-test' test.course_class.id test.id %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" id="btnExport" value="Export PDF" />
+    <input type="button" class="click-me no-decoration mx-2 px-4 py-2 mt-1" onclick="exportTableToExcel('pdfable', 'document')" value="Export XLS"/>
+</div>
+<script>
+    $(function(){
+        $('#search').keyup(function(){
+            search_table($(this).val());
+        });
+        function search_table(value){
+            $('table tbody tr').each(function(){
+                var found='false';
+                $(this).each(function(){
+                    if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        found = 'true';
+                    }
+                });
+                if(found == 'true'){
+                    $(this).show();
+                }
+                else
+                {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(function(){
+        $('th').each(function(column){
+            $(this).hover(function(){
+                $(this).data('type', $(this).attr('class'));
+                $(this).addClass('clickable');
+            }, function(){
+                $(this).removeClass('clickable');
+            });
+            $(this).click(function(){
+                var ascending = $(this).hasClass('ascending');
+                var type = $(this).data('type');
+                var records = $('table').find('tbody > tr');
+                records.sort(function(a,b){
+                    var value1 = $(a).children('td').eq(column).text();
+                    var value2 = $(b).children('td').eq(column).text();
+                    if (type == 'num'){
+                        value1 *= 1;
+                        value2 *= 1;
+                    }
+                    if(ascending){
+                      return (value1 > value2) ? -1 : (value1 < value2 ? 1: 0)
+                    }else{
+                      return (value1 < value2) ? -1 : (value1 > value2 ? 1 : 0)
+                    }
+                });
+                $(this).toggleClass('ascending');
+                $.each(records, function(index, row){
+                    $('tbody').append(row);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

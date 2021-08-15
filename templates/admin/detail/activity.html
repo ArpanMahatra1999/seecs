@@ -1,0 +1,58 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load mathfilters %}
+{% block title %}
+{{activity}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-pencil-square-o"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Activity/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <a href="{% url 'update-activity' activity.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Activity</a>
+    <a href="{% url 'delete-activity' activity.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Activity</a>
+</div>
+<br>
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <h1>{{activity.title}}</h1>
+            {% if activity.dss %}
+            <h5><a href="{% url 'dss-detail' activity.dss.id %}" class="underlineless">{{activity.dss}}</a></h5>
+            {% endif %}
+            <p>Created by {{activity.created_by}}</p>
+            <p>
+                {% autoescape off %}
+                {{activity.description}}
+                {% endautoescape %}
+            </p>
+            <p>Responsible person: {{activity.responsible_person}}</p>
+            <p>Fiscal year: {{activity.fiscal_year}}</p>
+            <p>Quarter: {{activity.quarter}}</p>
+            <p>Estimated cost: Rs. {{activity.estimated_cost}}</p>
+            <p>Actual Cost: Rs. {{activity.actual_cost}}</p>
+            {% if activity.planned_start_date_AD|date:"Y-m-d" != '1975-01-01' %}
+            <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Planned Start Date: {{activity.planned_start_date_AD}}
+            ({% nepali_date activity.planned_start_date_AD %} BS)</p>
+            {% endif %}
+            {% if activity.planned_end_date|date:"Y-m-d" != '1975-01-01' %}
+            <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Planned End Date: {{activity.planned_end_date_AD}}
+            ({% nepali_date activity.planned_end_date_AD %} BS)</p>
+            {% endif %}
+            {% if activity.actual_start_date_AD|date:"Y-m-d" != '1975-01-01' %}
+            <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Actual Start Date: {{activity.actual_start_date_AD}}
+            ({% nepali_date activity.actual_start_date_AD %} BS)</p>
+            {% endif %}
+            {% if activity.actual_end_date_AD|date:"Y-m-d" != '1975-01-01' %}
+            <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Actual End Date: {{activity.actual_end_date_AD}}
+            ({% nepali_date activity.actual_end_date_AD %} BS)</p>
+            {% endif %}
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+</div>
+{% endblock %}

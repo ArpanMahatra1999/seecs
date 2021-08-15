@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css">
+    <link rel="stylesheet" href="{% static 'css/outer_style.css' %}">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <link rel="icon" href="{% static 'images/ctevt_logo.png' %}">
+</head>
+
+<body>
+    <section id="homePage">
+        <div class="container-fluid">
+            <div class="row align-items-center pt-4 pb-4 px-0 heading">
+                <div class="col-lg-2 d-flex justify-content-lg-end justify-content-center"><a href="{% url 'home' %}"><img src="{% static 'images/ctevt_logo.png' %}" width="100"
+                                                     height="110"></a></div>
+                <div class="col-lg-10 d-flex justify-content-lg-start justify-content-center">
+                    <div class="row text-center text-color1"><a href="{% url 'home' %}"><h1 class="text-color1"><b>Strengthening
+                        Employer Engagement in CTEVT Schools</b></h1></a></div>
+                </div>
+            </div>
+        </div>
+        <div class="bar">
+        </div>
+        <div class="container mt-1">
+            <div class="row justify-content-between">
+                <div class="col-lg-6 align-self-center backdrop mt-4">
+                    <h4 class="font-weight-bold">Background</h4>
+                    <hr class="line">
+                    <p class="mt-0 text-justify"><i class="fa fa-caret-right"></i>&nbsp;&nbsp;This platform is well-organized and user-friendly database system of strenthening employer's engagement in CTEVT schools project. Project is bilateral understanding between CTEVT and Dakshyata project to support the strengthening and implementation of employer engagement policy, processes and practice in Nepal's TEVT sector.</p>
+                </div>
+                <div class="col-lg-4 offset-lg-1 offset-md-2 col-md-8 mt-lg-0">
+                    <div class="authentication">
+                        {% block body %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="bar">
+    </div>
+    <div class="mainfooter">
+        <div class="row d-flex justify-content-between flex-wrap">
+            <div class="col-lg-6">
+                <div class="footer-1">
+                        <span><i class="fa fa-map-marker" aria-hidden="true"></i> &nbsp; Sanothimi, Bhaktapur, Nepal</span>
+                    <span><i class="fa fa-phone" aria-hidden="true"></i> &nbsp;+977-1-6631458, 6631459, 6630769</span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="footer-2">
+                        <span> <i class=" fa fa-envelope" aria-hidden="true"></i> &nbsp; info@ctevt.org.np, research@ctevt.org.np </span>
+                    <span> <i class=" fa fa-podcast" aria-hidden="true"></i>
+                            &nbsp; 3546, Kathmandu, Nepal</span>
+                </div>
+            </div>
+        </div>
+        <hr class="line">
+        <div class="row d-flex justify-content-center flex-wrap"><div class="col d-flex justify-content-end mx-0 px-0">&copy; Developed by: </div>&nbsp;&nbsp;<div class="col d-flex justify-content-start mx-0 px-0"><a href="https://glocalnepal.com/" class="text-white">Glocal Pvt. Ltd.</a></div></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous">
+    </script>
+    <script src="https://use.fontawesome.com/dc3bfb49c7.js">
+    </script>
+
+</body>
+</html>

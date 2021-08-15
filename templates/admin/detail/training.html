@@ -1,0 +1,58 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{training}}
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-university"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;Admin/&nbsp;Capacity Building/&nbsp;Detail</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+    <a href="{% url 'update-training' training.id %}" class="click-me px-4 py-2 my-2 mx-2 no-decoration">Edit Capacity Building</a>
+    <a href="{% url 'delete-training' training.id %}" class="click-me-red px-4 py-2 my-2 mx-2 no-decoration">Delete Capacity Building</a>
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+        <h1>{{training.training_module_name}}</h1>
+        <h5><a href="{% url 'dss-detail' training.dss.id %}" class="underlineless">{{training.dss}}</a></h5>
+        <p>Created by {{training.created_by}}</p>
+        {% if training.description %}
+        <p>
+            {% autoescape off %}
+            {{training.description}}
+            {% endautoescape %}
+        </p>
+        {% endif %}
+        <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Planned Start Date: {{training.planned_start_date_AD}}
+                ({% nepali_date training.planned_start_date_AD %} BS)</p>
+        <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Planned End Date: {{training.planned_start_date_AD}}
+                ({% nepali_date training.planned_start_date_AD %} BS)</p>
+        {% if training.actual_start_date_AD|date:"Y-m-d" != '1975-01-01' %}
+            <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Actual Start Date: {{training.actual_start_date_AD}}
+                ({% nepali_date training.actual_start_date_AD %} BS)</p>
+        {% endif %}
+        {% if training.actual_end_date_AD|date:"Y-m-d" != '1975-01-01' %}
+            <p><i class="fa fa-calendar blue-icon" aria-hidden="true"></i>&nbsp;&nbsp;Actual End Date: {{training.actual_end_date_AD}}
+                ({% nepali_date training.actual_end_date_AD %} BS)</p>
+        {% endif %}
+        {% if training.proposed_training_providing_agencies %}
+        Proposed training providing agencies: {{training.proposed_training_providing_agencies}}<br>
+        {% endif %}
+        {% if training.number_of_attendees %}
+        Number of Attendees: {{training.number_of_attendees}}
+        {% endif %}
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+</div>
+</div>
+{% endblock %}

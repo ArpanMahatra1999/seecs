@@ -1,0 +1,43 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+Class Log
+{% endblock %}
+{% block head-of-body %}
+<div>
+    <div class="nnl"><i class="fa fa-calendar"></i></div>
+    <div class="nnl name">&nbsp;&nbsp;DSS/&nbsp;Class Log</div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-end pt-1 px-5 pb-2">
+    <input type="button"  class="click-me px-4 py-2 my-2 mx-2 no-decoration" id="btnExport" value="Export" />
+</div>
+<br>
+<div id="pdfable">
+<div class="row mx-1">
+    <div class="col-lg-12 bg-light rounded px-5 py-5 mx-1">
+        <div class="row">
+            <div class="col-lg-12 px-5">
+                {% for notification in notifications reversed %}
+                <div class="row">
+                    <div class="col-lg-3"><i class="fa fa-calendar blue-icon"></i>&nbsp;&nbsp;{{notification.date_and_time}} -</div>
+                    <div class="col-lg-8">
+                        <h3>{{notification.course_class}}</h3>
+                        <p>{{notification.message}} by {{notification.course_class.user}}</p>
+                    </div>
+                    <div class="col-lg-1">
+                        <a href="{% url 'dss:course-class-detail' notification.course_class.id %}"><i
+                                class="fa fa-info"
+                                aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <hr style="height:1px; border:none">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
